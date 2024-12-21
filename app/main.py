@@ -108,8 +108,30 @@ async def get_items(
     # Handle logic here depending on whether query parameters were provided or not
   
     try:
-        response = {key: value for key, value in locals().items() if value is not None}
+        response = {key: value for key, value in locals().items() if value is not None and key !='Index'}
         return await database.get_collection("fund_details").find(response).to_list(length=None)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+
+@prefix_router.get("/funds_index_list")
+async def get_items(
+    Scheme_Category: Optional[str] = Query(None),
+    Scheme_Name: Optional[str] = Query(None),
+    Scheme_Type: Optional[str] = Query(None),
+    Mutual_Fund_Family: Optional[str] = Query(None),
+    Index : Optional[str] = Query(None)
+):
+    # Handle logic here depending on whether query parameters were provided or not
+  
+    try:
+        response = {key: value for key, value in locals().items() if value is not None and key !='Index'}
+        response = await database.get_collection("fund_details").find(response, {'_id': False}).to_list(length=None)
+        if Index is None:
+            return response
+        else:
+            return list(set([each_rec[Index] for each_rec in response]))
+        # return Index
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 @prefix_router.post("/logout")
