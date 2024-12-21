@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx_ui
+    ports:
+      - "8082:80" 
+    volumes:
+      - ./UI:/usr/share/nginx/html:ro # Maps your local `UI` directory to Nginx's default web root
+    restart: always
+    depends_on:
+      - backend
+    networks:
+        - bridge_network  
+
+  backend:
+    build: .
+    ports:
+      - "8081:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MONGO_DETAILS=mongodb://admin:admin@mongo:27017
+      - DB_NAME=bhive
+      - SECRET_KEY="03488fa7f2c4"
+      - ALGORITHM="HS256"
+      - ACCESS_TOKEN_EXPIRE_MINUTES=30
+      - TTL_EXPIRE_FOR_JWT_TOKEN_COLLECTION=1800
+    depends_on:
+      - mongo
+    volumes:
+      - .:/app
+    # command: ["gunicorn", "--bind", "0.0.0.0:8000", "app.main:app"]  # Start the Gunicorn server
+    networks:
+        - bridge_network  
+
+  mongo:
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+    volumes:
+      - mongo-data:/data/db  
+    networks:
+        - bridge_network
+volumes:
+  mongo-data: 
+
+networks:
+  bridge_network:
+    driver: bridge

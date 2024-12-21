@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        .login-container h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .login-container input[type="text"],
+        .login-container input[type="password"] {
+            width: 95%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .login-container button:hover {
+            background-color: #45a049;
+        }
+
+        .login-container a {
+            display: block;
+            margin-top: 15px;
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        .login-container a:hover {
+            text-decoration: underline;
+        }
+
+        .response-message {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <div class="response-message" id="responseMessage"></div>
+        <form action="#" method="post" onsubmit="handleLogin(event)">
+            <input type="text" id="username" name="username" placeholder="Username" required>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <br>
+        <button id="redirectButton" type="submit">Register</button>
+    </div>
+
+    </div>
+
+    <script>
+        const redirectButton = document.getElementById("redirectButton");
+
+        redirectButton.addEventListener("click", function () {
+            window.location.href = "register.html";
+        });
+        async function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const responseMessage = document.getElementById('responseMessage');
+            try {
+                const response = await fetch('http://127.0.0.1:8081/api/v1/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "email": username,
+                        "password": password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.message == "Login Sucessfully") {
+                    responseMessage.textContent = `${data.message}`;
+                    responseMessage.style.color = "green";
+                } else {
+                    responseMessage.textContent = `Error: ${data.message}`;
+                    responseMessage.style.color = "red";
+                }
+            } catch (error) {
+                responseMessage.textContent = `Error: Unable to connect to the server.`;
+                responseMessage.style.color = "red";
+            }
+        }
+        // function handleLogin(event) {
+        //     event.preventDefault();
+        //     const username = document.getElementById('username').value;
+        //     const password = document.getElementById('password').value;
+        //     const responseMessage = document.getElementById('responseMessage');
+
+        //     // Simulated response
+        //     if (username === "user" && password === "pass") {
+        //         responseMessage.textContent = "Login successful! Welcome, " + username + "!";
+        //         responseMessage.style.color = "green";
+        //     } else {
+        //         responseMessage.textContent = "Invalid username or password.";
+        //         responseMessage.style.color = "red";
+        //     }
+        // }
+    </script>
+</body>
+
+</html>

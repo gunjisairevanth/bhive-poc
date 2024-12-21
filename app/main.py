@@ -63,7 +63,7 @@ async def register(user_create: UserCreate):
     raise HTTPException(status_code=200, detail="User registration Sucessfully") 
 
 
-@prefix_router.post("/login", response_model=Token)
+@prefix_router.post("/login")
 async def login(user: UserLogin, response: Response):
     db_user = await database.get_collection("users").find_one({"email": user.email})
     if not db_user or not verify_password(user.password, db_user["password"]):

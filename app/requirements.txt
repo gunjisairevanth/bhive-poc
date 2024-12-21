@@ -4,8 +4,11 @@ motor
 pydantic
 python-dotenv
 passlib[bcrypt] 
+python-jose[cryptography]
 python-jose
 requests
 jinja2 
 aiofiles
 flask_cors
+pyjwt
+cryptography
