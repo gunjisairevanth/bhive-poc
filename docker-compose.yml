@@ -8,6 +8,7 @@ services:
       - "8082:80" 
     volumes:
       - ./UI:/usr/share/nginx/html:ro # Maps your local `UI` directory to Nginx's default web root
+      - ./nginx_config.conf:/etc/nginx/nginx.conf:ro # Map custom nginx.conf
     restart: always
     depends_on:
       - backend
@@ -16,8 +17,6 @@ services:
 
   backend:
     build: .
-    ports:
-      - "8081:8000"
     environment:
       - PYTHONUNBUFFERED=1
       - MONGO_DETAILS=mongodb://admin:admin@mongo:27017
