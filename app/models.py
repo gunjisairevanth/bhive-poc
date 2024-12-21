@@ -20,3 +20,26 @@ class UserLogin(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+
+class ListFunds(BaseModel):
+    Scheme_Code: int
+    Date: str
+    ISIN_Div_Payout_ISIN_Growth: str
+    ISIN_Div_Reinvestment: str
+    Mutual_Fund_Family: str
+    Net_Asset_Value: float
+    Scheme_Category: str
+    Scheme_Name: str
+    Scheme_Type: str
+
+class ListFundsQuery(BaseModel):
+    Scheme_Code: int
+    Date: str
+    ISIN_Div_Payout_ISIN_Growth: str
+    ISIN_Div_Reinvestment: str
+    Mutual_Fund_Family: str
+    Net_Asset_Value: float
+    Scheme_Category: str
+    Scheme_Name: str
+    Scheme_Type: str

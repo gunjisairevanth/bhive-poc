@@ -1,9 +1,10 @@
-from fastapi import FastAPI, HTTPException, APIRouter, Request, Response
-from app.models import UserCreate, UserLogin, Token
+from fastapi import FastAPI, HTTPException, APIRouter, Request, Response, Query
+from app.models import UserCreate, UserLogin, Token, ListFundsQuery, ListFunds
 from app.database import database
 from pydantic import BaseModel
 from bson import ObjectId
 import requests
+from typing import List, Optional
 from fastapi.encoders import jsonable_encoder
 from passlib.context import CryptContext
 from app.security import create_access_token
@@ -96,7 +97,21 @@ async def sync_funds_latest_details():
     else:
         return {"message": f"Failed to fetch data"}
 
-
+# response_model=List[ListFunds]
+@prefix_router.get("/funds_list", response_model=List[ListFunds])
+async def get_items(
+    Scheme_Category: Optional[str] = Query(None),
+    Scheme_Name: Optional[str] = Query(None),
+    Scheme_Type: Optional[str] = Query(None),
+    Mutual_Fund_Family: Optional[str] = Query(None)
+):
+    # Handle logic here depending on whether query parameters were provided or not
+  
+    try:
+        response = {key: value for key, value in locals().items() if value is not None}
+        return await database.get_collection("fund_details").find(response).to_list(length=None)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 @prefix_router.post("/logout")
 async def logout(response: Response):
     response.delete_cookie("access_token")  # This will remove the cookie
