@@ -11,7 +11,14 @@ from app.security import create_access_token
 import uuid
 from contextlib import asynccontextmanager
 from app.utils import startup_tasks, shutdown_tasks
+from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.middleware.cors import CORSMiddleware
 
+origins = [
+    "*",
+    "null"
+]
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -21,9 +28,15 @@ async def lifespan(app: FastAPI):
     await shutdown_tasks()
 
 app = FastAPI(lifespan=lifespan)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,  
+    allow_methods=["*"],  
+    allow_headers=["*"],  
+)
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 prefix_router = APIRouter(prefix="/api/v1")
-
 
 def hash_password(password: str):
     return pwd_context.hash(password)
@@ -54,7 +67,7 @@ async def register(user_create: UserCreate):
 async def login(user: UserLogin, response: Response):
     db_user = await database.get_collection("users").find_one({"email": user.email})
     if not db_user or not verify_password(user.password, db_user["password"]):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        return {"message": "User not found or invalid password"}
 
     access_token = create_access_token(data={"sub": db_user['user_id']})
     await database.get_collection("token").insert_one({
@@ -62,7 +75,7 @@ async def login(user: UserLogin, response: Response):
         "token" : access_token
     })
     response.set_cookie(key="access_token", value=access_token, httponly=True, secure=True, samesite="Strict")
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"message": "Login Sucessfully", "access_token": access_token, "token_type": "bearer"}
 
 
 @prefix_router.get("/sync")
@@ -138,7 +151,5 @@ async def get_items(
 async def logout(response: Response):
     response.delete_cookie("access_token")  # This will remove the cookie
     return {"message": "Logout successful"}
-
-
 
 app.include_router(prefix_router)

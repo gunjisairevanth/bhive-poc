@@ -6,3 +6,6 @@ python-dotenv
 passlib[bcrypt] 
 python-jose
 requests
+jinja2 
+aiofiles
+flask_cors
