@@ -5,7 +5,7 @@ services:
     image: nginx:latest
     container_name: nginx_ui
     ports:
-      - "80:80" 
+      - "8082:80" 
     volumes:
       - ./UI:/usr/share/nginx/html:ro # Maps your local `UI` directory to Nginx's default web root
       - ./nginx_config.conf:/etc/nginx/nginx.conf:ro # Map custom nginx.conf
