@@ -118,6 +118,10 @@
                 if (data.message == "Login Sucessfully") {
                     responseMessage.textContent = `${data.message}`;
                     responseMessage.style.color = "green";
+                    localStorage.setItem("bhive_user_session", data.access_token);
+                    setTimeout(function () {
+                        window.location.href = 'dashboard.html';  // Redirect to login.html
+                    }, 1000);
                 } else {
                     responseMessage.textContent = `Error: ${data.message}`;
                     responseMessage.style.color = "red";

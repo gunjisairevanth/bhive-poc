@@ -21,6 +21,10 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
+class UserDetails(BaseModel):
+    name: str
+    email: str
+
 
 class ListFunds(BaseModel):
     Scheme_Code: int

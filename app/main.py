@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, APIRouter, Request, Response, Query
-from app.models import UserCreate, UserLogin, Token, ListFundsQuery, ListFunds
+from app.models import UserCreate, UserDetails, UserLogin, Token, ListFundsQuery, ListFunds
 from app.database import database
 from pydantic import BaseModel
 from bson import ObjectId
@@ -77,6 +77,21 @@ async def login(user: UserLogin, response: Response):
     response.set_cookie(key="access_token", value=access_token, httponly=True, secure=True, samesite="Strict")
     return {"message": "Login Sucessfully", "access_token": access_token, "token_type": "bearer"}
 
+@prefix_router.get("/get_user_details", response_model=UserDetails)
+async def get_user_details(jwt_token: Optional[str] = Query(None)):
+    if jwt_token != None:
+        db_user = await database.get_collection("token").find_one({"token": jwt_token})
+        if db_user != None:
+            user_details = await database.get_collection("users").find_one({"user_id": db_user['email']})
+            return {
+                "name" : user_details['name'],
+                "email" : user_details['email']
+            }
+    return {
+        "name" : None,
+        "email" : None
+    }
+
 
 @prefix_router.get("/sync")
 async def sync_funds_latest_details():
@@ -147,9 +162,10 @@ async def get_items(
         # return Index
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-@prefix_router.post("/logout")
-async def logout(response: Response):
+@prefix_router.get("/logout")
+async def logout(response: Response, jwt_token: Optional[str] = Query(None)):
     response.delete_cookie("access_token")  # This will remove the cookie
+    database.get_collection("token").delete_one({"token": jwt_token})
     return {"message": "Logout successful"}
 
 app.include_router(prefix_router)
