@@ -97,8 +97,8 @@ async def get_user_details(jwt_token: Optional[str] = Query(None)):
 async def sync_funds_latest_details():
     url = "https://latest-mutual-fund-nav.p.rapidapi.com/latest?Scheme_Type=Open"
     headers = {
-        'x-rapidapi-key': "686776dbc9msh7847bc739f15c8bp145bb0jsne77159d2f342",
-        'x-rapidapi-host': "latest-mutual-fund-nav.p.rapidapi.com"
+        "x-rapidapi-key": "686776dbc9msh7847bc739f15c8bp145bb0jsne77159d2f342",
+	    "x-rapidapi-host": "latest-mutual-fund-nav.p.rapidapi.com"
     }
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
