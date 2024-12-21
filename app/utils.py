@@ -1,4 +1,4 @@
-from app.database import create_ttl_index
+from app.database import create_ttl_index, database
 async def startup_tasks():
     print("Starting up...")
     await create_ttl_index()
@@ -6,3 +6,5 @@ async def startup_tasks():
 
 async def shutdown_tasks():
     print("Shutting down...")
+
+

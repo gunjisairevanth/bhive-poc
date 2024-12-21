@@ -3,6 +3,7 @@ from app.models import UserCreate, UserLogin, Token
 from app.database import database
 from pydantic import BaseModel
 from bson import ObjectId
+import requests
 from fastapi.encoders import jsonable_encoder
 from passlib.context import CryptContext
 from app.security import create_access_token
@@ -61,6 +62,40 @@ async def login(user: UserLogin, response: Response):
     })
     response.set_cookie(key="access_token", value=access_token, httponly=True, secure=True, samesite="Strict")
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@prefix_router.get("/sync")
+async def sync_funds_latest_details():
+    url = "https://latest-mutual-fund-nav.p.rapidapi.com/latest?Scheme_Type=Open"
+    headers = {
+        'x-rapidapi-key': "3732dec9a0msh7ee1adb6a3261d2p1be5c3jsnf7aebf6cd9ee",
+        'x-rapidapi-host': "latest-mutual-fund-nav.p.rapidapi.com"
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        response_data = response.json()
+        if isinstance(response_data, list):
+            for fund in response_data:
+                scheme_code = fund.get("Scheme_Code")
+                if scheme_code:
+                    database.get_collection("fund_details").update_one(
+                        {"Scheme_Code": scheme_code},
+                        {"$set": fund},
+                        upsert=True 
+                    )
+        else:
+            scheme_code = response_data.get("Scheme_Code")
+            if scheme_code:
+                database.get_collection("fund_details").update_one(
+                    {"Scheme_Code": scheme_code},
+                    {"$set": response_data},
+                    upsert=True
+                )
+
+        return {"message": "Data saved to MongoDB successfully!"}
+    else:
+        return {"message": f"Failed to fetch data"}
+
 
 @prefix_router.post("/logout")
 async def logout(response: Response):
