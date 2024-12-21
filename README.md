@@ -63,6 +63,19 @@ Demo Video : https://drive.google.com/file/d/1wwmZVoMGHbKYbFDo4UAIi114SVFFUR_4/v
 
 ![App Screenshot](https://i.ibb.co/Pt7GbSt/Screencast-from-2024-12-21-20-12-17.gif)
 
+## API Regression testing
+
+Postman Collection
+
+```bash
+  https://api.postman.com/collections/3518861-0eb06b43-cb4f-4360-8d21-3212862f6832?access_key=PMAT-01JFNAW8NP5HZHDM8AT41AC7XN
+```
+
+Just Import this collection the Run it. Environment key and value will be auto generate by pre-script exection.
+
+
+![App Screenshot](https://i.ibb.co/kGySRZY/Screenshot-from-2024-12-22-00-51-16.png)
+![App Screenshot](https://i.ibb.co/gjcnZZN/Screenshot-from-2024-12-22-00-53-23.png)
 
 # Hi, I'm Sai Revanth! 👋
 
