@@ -1,14 +1,16 @@
-# app/security.py
 
 from datetime import datetime, timedelta
 from typing import Union
 from jose import JWTError, jwt
 from passlib.context import CryptContext
+import os
+from dotenv import load_dotenv
 
-# Secret key for encoding/decoding JWT tokens
-SECRET_KEY = "your_secret_key_here"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY","")
+ALGORITHM = os.getenv("ALGORITHM","")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES",""))
 
 # Password hashing context using bcrypt
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
