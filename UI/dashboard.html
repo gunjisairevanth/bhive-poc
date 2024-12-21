@@ -119,7 +119,7 @@
         const logout_button = document.getElementById("logout_button");
 
         logout_button.addEventListener("click", function () {
-            const response = fetch('http://127.0.0.1:8082/api/v1/logout?jwt_token=' + localStorage.getItem("bhive_user_session"));
+            const response = fetch(`http://${window.location.hostname}/api/v1/logout?jwt_token=` + localStorage.getItem("bhive_user_session"));
 
             localStorage.removeItem("bhive_user_session");
             window.location.href = "index.html";
@@ -128,7 +128,7 @@
 
         async function fetchOptions() {
             try {
-                const response = await fetch('http://127.0.0.1:8082/api/v1/funds_index_list?Scheme_Category=Debt Scheme - Banking and PSU Fund&Index=Mutual_Fund_Family');
+                const response = await fetch(`http://${window.location.hostname}/api/v1/funds_index_list?Scheme_Category=Debt Scheme - Banking and PSU Fund&Index=Mutual_Fund_Family`);
 
                 const options = await response.json();
                 const selectElement = document.getElementById('fund-family-house');
@@ -152,7 +152,7 @@
         async function fetchTableData() {
             try {
                 const family = document.getElementById('fund-family-house').value
-                const response = await fetch('http://127.0.0.1:8082/api/v1/funds_index_list?Mutual_Fund_Family=' + family);
+                const response = await fetch(`http://${window.location.hostname}/api/v1/funds_index_list?Mutual_Fund_Family=` + family);
                 const data = await response.json();
                 generateTable(data);
             } catch (error) {
@@ -163,7 +163,7 @@
         async function getUserDetails() {
             try {
                 const family = document.getElementById('fund-family-house').value
-                const response = await fetch('http://127.0.0.1:8082/api/v1/get_user_details?jwt_token=' + localStorage.getItem("bhive_user_session"));
+                const response = await fetch(`http://${window.location.hostname}/api/v1/get_user_details?jwt_token=` + localStorage.getItem("bhive_user_session"));
                 const data = await response.json();
                 document.getElementById("username").innerHTML = "Hi " + data['name'];
             } catch (error) {
